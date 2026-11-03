@@ -40,7 +40,7 @@ Symptoms = {
     'stomach ache': {'advice': 'could be gastritis, food poisoning, or typhoid. Avoid heavy meals.', 'severity': 'medium'}
 }
 
-# Bemba Translation Aliases
+# Multilingual Local Language Aliases (Bemba, Nyanja, Tonga)
 bemba_to_english = {
     'nde unfwa umubili nau kaba': 'fever',
     'nde unfwa umutwe ule kalipa': 'headache',
@@ -50,26 +50,50 @@ bemba_to_english = {
     'umubili wandi nau kaba': 'fever',
     'nda lwala umutwe': 'headache',
     'inda yalabila': 'stomach ache',
-    'ndi na malali': 'malaria'
+    'ndi na malali': 'malaria',
+    # Nyanja additions
+    'mutu ukupweteka': 'headache',
+    'ndili na malungo': 'fever',
+    'chifuwa': 'cough',
+    # Tonga additions
+    'ndila vuna mutwe': 'headache',
+    'muselo': 'fever'
 }
 
-# Helper to look up Clinics from clinics.jsn
-def get_clinic_by_district(district_name):
+# Helper to look up and filter Clinics by NHIMA and 24/7 Hours
+def get_filtered_clinic_by_district(district_name, nhima_required=False, hours_247_required=False):
     try:
         base_dir = os.path.dirname(os.path.abspath(__file__))
         clinics_path = os.path.join(base_dir, 'clinics.json')
         if os.path.exists(clinics_path):
             with open(clinics_path, 'r', encoding='utf-8') as f:
                 clinics = json.load(f)
-                # Filter matching district case-insensitively
                 filtered = [c for c in clinics if c['district'].lower() == district_name.lower()]
+                
+                if nhima_required:
+                    filtered = [c for c in filtered if str(c.get('nhima_accepted', '')).lower() in ['yes', 'true', 'accepted']]
+                
+                if hours_247_required:
+                    filtered = [c for c in filtered if '24/7' in str(c.get('hours', ''))]
+                
                 if filtered:
                     clinic = filtered[0]
-                    nhima_status = "Accepted" if clinic['nhima_accepted'] else "Not Accepted"
-                    return f"{clinic['name']} | Phone: {clinic['phone']} | NHIMA: {nhima_status} | Hours: {clinic['hours']}"
+                    nhima_status = "Accepted" if clinic.get('nhima_accepted') else "Not Accepted"
+                    return f"{clinic['name']} | Phone: {clinic.get('phone', 'N/A')} | NHIMA: {nhima_status} | Hours: {clinic.get('hours', '24/7')}"
     except Exception:
         pass
     return "Chilenje Level 1 Hospital | Phone: 0211-272123 | NHIMA: Accepted | Hours: 24/7 (Default)"
+
+def log_query_to_db(symptom, district, advice):
+    conn = sqlite3.connect(DB_NAME)
+    try:
+        conn.execute(
+            'INSERT INTO queries (timestamp, symptom, district, advice) VALUES (?, ?, ?, ?)',
+            (datetime.datetime.now().isoformat(timespec='seconds'), symptom, district, advice)
+        )
+        conn.commit()
+    finally:
+        conn.close()
 
 @app.route('/')
 def home():
@@ -79,33 +103,45 @@ def home():
 def chat():
     data = request.get_json()
     user_message = data.get('message', '').strip().lower()
-    district = data.get('district', 'chilenje').strip().lower()
+    district = data.get('district', 'chilenje').strip()
+    nhima_only = data.get('nhima_only', False)
+    hours_247_only = data.get('hours_247_only', False)
     
-    # Translate Bemba to English if applicable
-    if user_message in bemba_to_english:
-        user_message = bemba_to_english[user_message]
-    
-    # Check symptom dictionary
-    if user_message in Symptoms:
-        advice = Symptoms[user_message]['advice']
-        severity = Symptoms[user_message]['severity']
-        clinic_info = get_clinic_by_district(district)
+    # 1. Check for local language alias match first
+    translated_symptom = bemba_to_english.get(user_message, user_message)
+
+    # 2. Support multi-condition matching
+    detected_conditions = []
+    highest_severity = 'low'
+    severity_rank = {'low': 1, 'medium': 2, 'high': 3}
+
+    for symptom_key, info in Symptoms.items():
+        if symptom_key in translated_symptom or symptom_key in user_message:
+            detected_conditions.append((symptom_key, info))
+            if severity_rank.get(info['severity'], 1) > severity_rank.get(highest_severity, 1):
+                highest_severity = info['severity']
+
+    # 3. Formulate the response
+    if detected_conditions:
+        advice_parts = []
+        for symptom_key, info in detected_conditions:
+            advice_parts.append(f"• **{symptom_key.capitalize()}**: {info['advice']}")
         
-        reply = f"[{severity.upper()} SEVERITY] {advice.capitalize()}. Recommended clinic in {district.title()}: {clinic_info}."
-        
-        # Save query to database with timestamp, symptom, district, and advice
-        conn = sqlite3.connect(DB_NAME)
-        c = conn.cursor()
-        timestamp_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        c.execute('INSERT INTO queries (timestamp, symptom, district, advice) VALUES (?, ?, ?, ?)', 
-                  (timestamp_str, user_message, district, advice))
-        conn.commit()
-        conn.close()
-        
-    elif user_message in ['hi', 'hello', 'muli bwanji', 'start']:
-        reply = "Muli bwanji! I am your health assistant. Please tell me your symptom in English or Bemba."
+        advice_text = "<br>".join(advice_parts)
+        if highest_severity == 'high':
+            advice_text = "⚠️ **URGENT MEDICAL ATTENTION RECOMMENDED**<br>" + advice_text
+
+        reply = f"Analysis for: '{user_message}'<br>{advice_text}"
     else:
-        reply = "Symptom not recognized. Please consult a doctor or visit your nearest health center."
+        reply = f"I didn't recognize specific symptoms in '{user_message}'. Try typing common symptoms like 'fever', 'headache', 'chest pain', or phrases like 'mutu ukupweteka'."
+
+    # 4. Append recommended clinic with all filters applied
+    clinic_info = get_filtered_clinic_by_district(district, nhima_required=nhima_only, hours_247_required=hours_247_only)
+    reply += f"<br><br>Recommended clinic: {clinic_info}"
+
+    # 5. Log query into SQLite database
+    primary_symptom = detected_conditions[0][0] if detected_conditions else "unknown"
+    log_query_to_db(primary_symptom, district, reply)
 
     return jsonify({'reply': reply})
 
@@ -118,11 +154,9 @@ def stats():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     
-    # Total queries count
     c.execute('SELECT COUNT(*) FROM queries')
     total_queries = c.fetchone()[0]
     
-    # Top 3 symptoms searched
     c.execute("""
         SELECT symptom, COUNT(*) as count
         FROM queries
@@ -132,7 +166,6 @@ def stats():
     """)
     top_symptoms = [{'symptom': row[0], 'count': row[1]} for row in c.fetchall()]
     
-    # Busiest district
     c.execute("""
         SELECT district, COUNT(*) as count
         FROM queries

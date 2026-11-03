@@ -57,6 +57,7 @@
             font-size: 13px;
             color: #555;
             border-bottom: 1px solid #e1e4e8;
+            gap: 6px;
         }
 
         .district-select select {
@@ -66,6 +67,21 @@
             font-size: 13px;
             outline: none;
             background: white;
+            cursor: pointer;
+        }
+
+        .filters-group {
+            display: flex;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #0e6655;
+        }
+
+        .filters-group label {
+            display: flex;
+            align-items: center;
+            gap: 3px;
             cursor: pointer;
         }
 
@@ -157,7 +173,7 @@
 <div class="chat-container">
     <div class="chat-header">🏥 Bantu Health AI</div>
     <div class="district-select">
-        <span>Select your Lusaka District:</span>
+        <span>District:</span>
         <select id="districtInput">
             <option value="chilenje">Chilenje</option>
             <option value="matero">Matero</option>
@@ -168,9 +184,13 @@
             <option value="bauleni">Bauleni</option>
             <option value="chawama">Chawama</option>
         </select>
+        <div class="filters-group">
+            <label><input type="checkbox" id="nhimaFilter"> NHIMA</label>
+            <label><input type="checkbox" id="hoursFilter"> 24/7</label>
+        </div>
     </div>
     <div id="chatMessages" class="chat-messages">
-        <div class="message bot-message">Muli bwanji! 🩺 Type a symptom (e.g., 'fever', 'headache', 'malaria') or a Bemba phrase like <i>'nde unfwa umubili nau kaba'</i> to get triage advice and nearby clinic recommendations.</div>
+        <div class="message bot-message">Muli bwanji! 🩺 Type a symptom (e.g., 'fever', 'headache', 'malaria'), a local phrase like <i>'mutu ukupweteka'</i>, or multiple symptoms separated by commas.</div>
     </div>
     <div class="chat-input-area">
         <input type="text" id="userInput" placeholder="Type a symptom or message..." autocomplete="off">
@@ -187,28 +207,39 @@
     async function sendMessage() {
         const text = inputField.value.trim();
         const district = document.getElementById("districtInput").value;
+        const nhimaOnly = document.getElementById("nhimaFilter").checked;
+        const hours247Only = document.getElementById("hoursFilter").checked;
         if (!text) return;
 
         const chatMessages = document.getElementById("chatMessages");
         
-        // Append user message cleanly
+        // Append user message securely with escapeHtml to protect against script injection
         chatMessages.innerHTML += `<div class="message user-message">${escapeHtml(text)}</div>`;
         inputField.value = "";
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
-        // Send request to Flask backend
+        // Send request to Flask backend including the new filter states
         try {
             const response = await fetch('/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text, district: district })
+                body: JSON.stringify({ 
+                    message: text, 
+                    district: district, 
+                    nhima_only: nhimaOnly, 
+                    hours_247_only: hours247Only 
+                })
             });
             const data = await response.json();
             
-            // Format bot reply with nice line breaks or cards if applicable
-            let formattedReply = escapeHtml(data.reply);
-            formattedReply = formattedReply.replace(/Recommended clinic/g, '<br><div class="clinic-card">🏥 <strong>Recommended Clinic:</strong>');
-            formattedReply += '</div>';
+            // Allow backend HTML formatting tags (<br>, <strong>, etc.) to render properly
+            let formattedReply = data.reply;
+            
+            // Format the clinic card section cleanly
+            if (formattedReply.includes("Recommended clinic:")) {
+                formattedReply = formattedReply.replace("Recommended clinic:", '<br><div class="clinic-card">🏥 <strong>Recommended Clinic:</strong>');
+                formattedReply += '</div>';
+            }
 
             chatMessages.innerHTML += `<div class="message bot-message">${formattedReply}</div>`;
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -217,7 +248,7 @@
         }
     }
 
-    // Simple security helper to prevent HTML injection
+    // Security helper to prevent HTML injection on user input bubbles
     function escapeHtml(text) {
         return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
