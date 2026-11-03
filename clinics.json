@@ -1,0 +1,170 @@
+[
+    {
+        "name": "Fairview Clinic",
+        "district": "Lusaka Central",
+        "phone": "097-812-3456",
+        "nhima_accepted": true,
+        "hours": "Mon-fri 08:00 - 17:00"
+    },
+    {
+        "name": "Chilenje Level 1 Hospital",
+        "district": "Chilenje",
+        "phone": "0211-272123",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Chelstone level 1 Hospital",
+        "district": "Chelstone",
+        "phone": "0211-229876",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Kalingalinga level 1 Hospital",
+        "district": "Kalingalinga",
+        "phone": "0211-228900",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Lusaka General Hospital",
+        "district": "kamwala south",
+        "phone": "0211-225678",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Kanyama level 1 Hospital",
+        "district": "Kanyama",
+        "phone": "0211-740123",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Matero level 1 Hospital",
+        "district": "Matero",
+        "phone": "0211-745221",
+        "nhima_accepted": false,
+        "hours": "24/7"
+    },
+    {
+        "name": "Chilenje Level 1 Hospital",
+        "district": "Chilenje",
+        "phone": "0211-272123",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "University Teaching Hospital",
+        "district": "Lusaka Central",
+        "phone": "0211-250777",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Medlands Hospital",
+        "district": "Rhodes Park",
+        "phone": "0211-220000",
+        "nhima_accepted": false,
+        "hours": "24/7"
+    },
+    {
+        "name": "Chingwele level 1 Hospital",
+        "district": "Matero",
+        "phone": "0211-236664",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Bauleni level 1 Hospital",
+        "district": "Bauleni",
+        "phone": "0211-236111",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "George Level 1 Hospital",
+        "district": "George compound",
+        "phone": "0211-237222",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Mtendere level 1 Hospital",
+        "district": "Mtendere",
+        "phone": "0211-238333",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Chaisa level 1 Hospital",
+        "district": "Chaisa",
+        "phone": "0211-239444",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Chipata level 1 Hospital",
+        "district": "Chipata Compound",
+        "phone": "0211-240555",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Kaunda square level 1 Hospital",
+        "district": "Kaunda Square",
+        "phone": "0211-241666",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Chawama level 1 Hospital",
+        "district": "Chawama",
+        "phone": "0211-242777",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Kanyama level 1 Hospital",
+        "district": "Kanyama",
+        "phone": "0211-740123",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Chazanga level 1 Hospital",
+        "district": "Chazanga",
+        "phone": "0211-242777",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Matero Main level 1 Hospital",
+        "district": "Matero",
+        "phone": "0211-2432888",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Ng'ombe level 1 Hospital",
+        "district": "Ng'ombe",
+        "phone": "0211-244999",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Kaunda square II stage level 1 Hospital",
+        "district": "Kaunda Square stage II",
+        "phone": "0211-245555",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    },
+    {
+        "name": "Chazanga Extensionlevel 1 Hospital",
+        "district": "Chaisanga Extension",
+        "phone": "0211-2496666",
+        "nhima_accepted": true,
+        "hours": "24/7"
+    }
+]

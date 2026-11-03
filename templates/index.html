@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bantu Health AI - Lusaka Triage Assistant</title>
+    <style>
+        :root {
+            --primary-color: #1A5276;
+            --primary-dark: #154360;
+            --bg-color: #f4f7f6;
+            --chat-bg: #ffffff;
+            --user-bubble: #1A5276;
+            --bot-bubble: #eef2f3;
+            --text-main: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--chat-bg);
+            border-radius: 14px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 90vh;
+        }
+
+        .chat-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 18px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        .district-select {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #555;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .district-select select {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccd1d1;
+            font-size: 13px;
+            outline: none;
+            background: white;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #fafbfc;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 10px;
+            max-width: 85%;
+            line-height: 1.5;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background: var(--user-bubble);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .bot-message {
+            background: var(--bot-bubble);
+            color: var(--text-main);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* Visual styling for clinic badges inside bot replies */
+        .clinic-card {
+            margin-top: 8px;
+            padding: 8px 10px;
+            background: #e8f8f5;
+            border-left: 4px solid #1abc9c;
+            font-size: 13px;
+            border-radius: 4px;
+            color: #0e6655;
+        }
+
+        .chat-input-area {
+            display: flex;
+            border-top: 1px solid #e1e4e8;
+            padding: 12px;
+            background: white;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccd1d1;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input-area input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .chat-input-area button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            margin-left: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .chat-input-area button:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">🏥 Bantu Health AI</div>
+    <div class="district-select">
+        <span>Select your Lusaka District:</span>
+        <select id="districtInput">
+            <option value="chilenje">Chilenje</option>
+            <option value="matero">Matero</option>
+            <option value="kanyama">Kanyama</option>
+            <option value="lusaka central">Lusaka Central</option>
+            <option value="chelstone">Chelstone</option>
+            <option value="kalingalinga">Kalingalinga</option>
+            <option value="bauleni">Bauleni</option>
+            <option value="chawama">Chawama</option>
+        </select>
+    </div>
+    <div id="chatMessages" class="chat-messages">
+        <div class="message bot-message">Muli bwanji! 🩺 Type a symptom (e.g., 'fever', 'headache', 'malaria') or a Bemba phrase like <i>'nde unfwa umubili nau kaba'</i> to get triage advice and nearby clinic recommendations.</div>
+    </div>
+    <div class="chat-input-area">
+        <input type="text" id="userInput" placeholder="Type a symptom or message..." autocomplete="off">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+    const inputField = document.getElementById("userInput");
+    inputField.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") { sendMessage(); }
+    });
+
+    async function sendMessage() {
+        const text = inputField.value.trim();
+        const district = document.getElementById("districtInput").value;
+        if (!text) return;
+
+        const chatMessages = document.getElementById("chatMessages");
+        
+        // Append user message cleanly
+        chatMessages.innerHTML += `<div class="message user-message">${escapeHtml(text)}</div>`;
+        inputField.value = "";
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Send request to Flask backend
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text, district: district })
+            });
+            const data = await response.json();
+            
+            // Format bot reply with nice line breaks or cards if applicable
+            let formattedReply = escapeHtml(data.reply);
+            formattedReply = formattedReply.replace(/Recommended clinic/g, '<br><div class="clinic-card">🏥 <strong>Recommended Clinic:</strong>');
+            formattedReply += '</div>';
+
+            chatMessages.innerHTML += `<div class="message bot-message">${formattedReply}</div>`;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        } catch (error) {
+            chatMessages.innerHTML += `<div class="message bot-message">⚠️ Error connecting to server. Please try again.</div>`;
+        }
+    }
+
+    // Simple security helper to prevent HTML injection
+    function escapeHtml(text) {
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+</script>
+
+</body>
+</html>

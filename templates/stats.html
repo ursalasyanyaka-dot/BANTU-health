@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bantu Health AI - Analytics Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: 40px auto; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); padding: 30px; }
+        h1 { color: #1A5276; text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 30px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: #f8f9fa; border-left: 5px solid #1A5276; padding: 20px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .stat-card h3 { margin: 0 0 10px 0; font-size: 14px; color: #555; text-transform: uppercase; }
+        .stat-card .value { font-size: 24px; font-weight: bold; color: #1A5276; }
+        .section-title { font-size: 16px; font-weight: bold; color: #1A5276; margin-bottom: 10px; border-bottom: 2px solid #e1e4e8; padding-bottom: 5px; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; font-size: 15px; }
+        .back-link { display: block; text-align: center; margin-top: 30px; color: #1A5276; text-decoration: none; font-weight: 600; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📊 Bantu Health AI Analytics</h1>
+    <div class="subtitle">Real-time telemetry and query logs from Lusaka users</div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Queries Logged</h3>
+            <div class="value" id="totalQueries">Loading...</div>
+        </div>
+        <div class="stat-card">
+            <h3>Busiest District</h3>
+            <div class="value" id="busiestDistrict" style="font-size: 20px;">Loading...</div>
+        </div>
+    </div>
+
+    <div class="section-title">Top Searched Symptoms</div>
+    <ul id="topSymptomsList">
+        <li>Loading top symptoms...</li>
+    </ul>
+
+    <a href="/" class="back-link">← Back to Chat Interface</a>
+</div>
+
+<script>
+    async function fetchStats() {
+        try {
+            const response = await fetch('/stats');
+            const data = await response.json();
+
+            document.getElementById("totalQueries").innerText = data.total_queries;
+            
+            if (data.busiest_district) {
+                document.getElementById("busiestDistrict").innerText = `${data.busiest_district.district} (${data.busiest_district.count} queries)`;
+            } else {
+                document.getElementById("busiestDistrict").innerText = "No data yet";
+            }
+
+            const symptomsList = document.getElementById("topSymptomsList");
+            symptomsList.innerHTML = "";
+            if (data.top_symptoms.length > 0) {
+                data.top_symptoms.forEach(item => {
+                    symptomsList.innerHTML += `<li><strong>${item.symptom}</strong> — ${item.count} searches</li>`;
+                });
+            } else {
+                symptomsList.innerHTML = "<li>No symptoms recorded yet. Try chatting with the bot first!</li>";
+            }
+        } catch (error) {
+            console.error("Error fetching stats:", error);
+        }
+    }
+
+    fetchStats();
+</script>
+
+</body>
+</html>
