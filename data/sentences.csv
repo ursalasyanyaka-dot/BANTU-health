@@ -1,21 +1,103 @@
 text,label
-"I have a severe headache and fever",english
-"My chest hurts when I breathe",english
-"Where is the nearest clinic in Chilenje?",english
-"Good morning, I need help with malaria testing",english
-"Can I use NHIMA insurance here?",english
-"nde unfwa umubili nau kaba",bemba
-"nde unfwa umutwe ule kalipa",bemba
-"nin jamba uku kola sana",bemba
-"nindwala shiki",bemba
-"chifuba chule kalipa",bemba
-"umubili wandi nau kaba",bemba
-"nda lwala umutwe",bemba
-"inda yalabila",bemba
-"ndi na malali",bemba
-"Kodi ndingatani ngati ndili ndi malungo?",nyanja
-"mutu ukupweteka kwambiri",nyanja
-"ndili na malungo",nyanja
-"chifuwa",nyanja
-"Ndine wodwala ndipo ndikufuna thandizo",nyanja
-"Kodi chipatala chapafupi chili kuti?",nyanja
+"I have a bad cough that won't go away",english
+"My child has diarrhoea and is vomiting",english
+"I need to see a doctor today",english
+"Where can I get an HIV test?",english
+"I feel dizzy and weak",english
+"My stomach is paining me",english
+"I think I have malaria",english
+"Is the clinic open on Saturday?",english
+"I need medicine for high blood pressure",english
+"My baby has a high temperature",english
+"I have been vomiting since last night",english
+"How much does the consultation cost?",english
+"I am pregnant and need antenatal care",english
+"My back hurts when I walk",english
+"Where is the nearest pharmacy?",english
+"I have a rash on my skin",english
+"My eyes are red and itchy",english
+"I have a sore throat",english
+"I need to collect my ARV medication",english
+"My tooth is very painful",english
+"Please call an ambulance",english
+"I cannot breathe well",english
+"My child needs vaccination",english
+"I have diabetes and I need my insulin",english
+"My leg is swollen",english
+"I have been coughing blood",english
+"Where is the nearest hospital?",english
+"I have a runny nose and I keep sneezing",english
+"I need a medical certificate",english
+"I feel pain when I urinate",english
+"My ears are painful",english
+"I feel very tired all the time",english
+"Can I be tested for tuberculosis?",english
+"I have cut my hand badly",english
+"ndi no kukohola ukwakosa",bemba
+"umwana wandi alesanza kabili alecisha inda",bemba
+"ndefwaya ukumona dokota lelo",bemba
+"nga nasangila kwi ukupima HIV",bemba
+"ndeumfwa ukupona umutwe kabili ndi no kunaka",bemba
+"inda yandi ilalumina",bemba
+"ndecetekela ukuti ndi na malaria",bemba
+"icipatala cilepula pa Cibelushi",bemba
+"ndefwaya umuti wa mulopa uwa pamwamba",bemba
+"umubili wa mwana wandi ulakaba sana",bemba
+"nalesanza ukutula ubushiku bwa mailo",bemba
+"ukumona dokota kulefwaya ndalama shinga",bemba
+"ndi no lubo kabili ndefwaya ukulolwa",bemba
+"umukoshi wandi ulalumina nga ndeenda",bemba
+"icipatala ica pafupi cili kwi",bemba
+"ndi no kuchichila pa nkanda",bemba
+"amenso yandi yatukuka kabili yalenena",bemba
+"umukoshi wandi ulalumina",bemba
+"ndefwaya ukutola umuti wandi we ARV",bemba
+"ameno yandi yalelumina sana",bemba
+"mwebo mwiteni ambulansi",bemba
+"nshilefumya umutima bwino",bemba
+"umwana wandi alefwaya umuti wa kupela",bemba
+"ndi na matenda ya shuga kabili ndefwaya insulin",bemba
+"umulundu wandi walowa",bemba
+"ndi no kukohola umulopa",bemba
+"icipatala icikalamba ica pafupi cili kwi",bemba
+"ndi no kubomba umushishi kabili ndi no kuyetemuka",bemba
+"ndefwaya icalembwa ica dokota",bemba
+"ndeumfwa ububi nga ndelikoma",bemba
+"amatwi yandi yalelumina",bemba
+"ndi no kulemwa nshiku shonse",bemba
+"nga nshingapimwa TB",bemba
+"nalicetula ukuboko ukwabipisha",bemba
+"ndikutsokomola kwambiri",nyanja
+"mwana wanga akutsegula m'mimba ndi kusanza",nyanja
+"ndikufuna kuonana ndi dokotala lero",nyanja
+"kodi ndingapime kuti HIV?",nyanja
+"ndikumva chizungulire ndi kufooka",nyanja
+"m'mimba mwanga mukupweteka",nyanja
+"ndikuganiza kuti ndili ndi malungo",nyanja
+"kodi chipatala chimatsegula Loweruka?",nyanja
+"ndikufuna mankhwala a kuthamanga kwa magazi",nyanja
+"mwana wanga ali ndi malungo aakulu",nyanja
+"ndakhala ndikusanza kuyambira usiku",nyanja
+"kodi kuonana ndi dokotala ndi ndalama zingati?",nyanja
+"ndili ndi pakati ndipo ndikufuna chithandizo",nyanja
+"msana wanga ukupweteka ndikamayenda",nyanja
+"kodi pharmacy yapafupi ili kuti?",nyanja
+"ndili ndi zotupa pa khungu",nyanja
+"maso anga ndi ofiira ndipo akuyabwa",nyanja
+"kukhosi kukupweteka",nyanja
+"ndikufuna kutenga mankhwala anga a ARV",nyanja
+"dzino langa likupweteka kwambiri",nyanja
+"chonde itanani ambulansi",nyanja
+"sindikupuma bwino",nyanja
+"mwana wanga akufuna katemera",nyanja
+"ndili ndi matenda a shuga ndipo ndikufuna insulin",nyanja
+"mwendo wanga watupa",nyanja
+"ndikutsokomola magazi",nyanja
+"kodi chipatala chachikulu chapafupi chili kuti?",nyanja
+"ndikuthamanga mphuno ndipo ndikuyetsemula",nyanja
+"ndikufuna satifiketi ya chipatala",nyanja
+"ndimamva kuwawa ndikamakodza",nyanja
+"makutu anga akupweteka",nyanja
+"ndatopa nthawi zonse",nyanja
+"kodi ndingapimidwe TB?",nyanja
+"ndadzicheka kwambiri m'manja",nyanja

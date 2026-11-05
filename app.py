@@ -1,25 +1,27 @@
-from flask import Flask, jsonify, request, render_template, make_response
+from flask import Flask, jsonify, request, render_template, make_response, Response
 from flask_httpauth import HTTPBasicAuth
 import sqlite3
 import os
 import json
 import datetime
 import csv
+from io import StringIO
 import difflib
 import math
 from dotenv import load_dotenv
+import health_records  
+import joblib
+
+load_dotenv()  # Load environment variables from .env file
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 DB_NAME = 'queries.db'
 
-#load virtual credentials
-load_dotenv()
-
 # Define users and their roles
 USERS_ROLES = {
-    "admin": os.getenv("ADMIN_PASSWORD"),
-    "health_worker": os.getenv("HEALTH_WORKER_PASSWORD")
+    "admin": os.getenv("ADMIN_PASSWORD", "adminpass2026"),
+    "health_worker": os.getenv("HEALTH_WORKER_PASSWORD", "healthpass2026")
 }
 
 @auth.verify_password
@@ -28,23 +30,89 @@ def verify_password(username, password):
         return username
     return None
 
-# Initialize the database with all required columns
+# Database connection helper
+def get_db_connection():
+    conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+DB_NAME = 'queries.db'
+
+
+# Load the trained model and vectorizer at startup
+model_path = os.path.join('models', 'language_detector.pkl')
+vectorizer_path = os.path.join('models', 'vectorizer.pkl')
+
+lang_model = None
+lang_vectorizer = None
+
+if os.path.exists(model_path) and os.path.exists(vectorizer_path):
+    lang_model = joblib.load(model_path)
+    lang_vectorizer = joblib.load(vectorizer_path)
+    print("Language detection model loaded successfully into backend!")
+
+def detect_user_language(text):
+    """
+    Predicts the language of the user message using the trained ML model.
+    Returns the predicted language ('english', 'bemba', or 'nyanja') and confidence score.
+    Falls back to 'english' if the model isn't loaded or input is empty.
+    """
+    if not lang_model or not lang_vectorizer or not text.strip():
+        return "english", 1.0
+    
+    # Vectorize and predict
+    text_vec = lang_vectorizer.transform([text])
+    prediction = lang_model.predict(text_vec)[0]
+    
+    # Get probability/confidence if available
+    try:
+        probabilities = lang_model.predict_proba(text_vec)[0]
+        max_prob = max(probabilities)
+    except Exception:
+        max_prob = 1.0
+        
+    return prediction, max_prob
+
+# Initialize the database with both required tables (queries and clinics)
 def init_db():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
+    
+    # 1. Queries Telemetry Table
     c.execute('''
         CREATE TABLE IF NOT EXISTS queries (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp TEXT NOT NULL,
             symptom TEXT NOT NULL,
+            language TEXT NOT NULL,
             district TEXT NOT NULL,
-            advice TEXT NOT NULL
+            advice_given TEXT NOT NULL
         )
     ''')
+    
+    # 2. Clinics Reference Table
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS clinics (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            district TEXT NOT NULL,
+            phone TEXT,
+            nhima_accepted TEXT,
+            hours TEXT
+        )
+    ''')
+    
     conn.commit()
     conn.close()
 
+# Run initialization immediately when app.py loads
 init_db()
+
+# Safe database connection helper
+def get_db_connection():
+    conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 # Core Symptom Dictionary
 Symptoms = {
@@ -147,76 +215,102 @@ def log_query_to_db(symptom, district, advice):
 def home():
     return render_template('index.html')
 
+# ADVANCED MULTI-CONDITION SYMPTOM EVALUATION
+def evaluate_symptoms(user_input):
+    user_input = user_input.lower().strip()
+    matched_symptoms = []
+    
+    # Check bemba dictionary
+    for bemba_phrase, eng_symptom in bemba_to_english.items():
+        if bemba_phrase in user_input:
+            matched_symptoms.append(eng_symptom)
+            
+    # Check standard symptoms dictionary
+    for symptom in Symptoms.keys():
+        if symptom in user_input and symptom not in matched_symptoms:
+            matched_symptoms.append(symptom)
+            
+    # Fuzzy matching fallback
+    if not matched_symptoms:
+        words = user_input.split()
+        for word in words:
+            matches = difflib.get_close_matches(word, Symptoms.keys(), n=1, cutoff=0.7)
+            if matches:
+                matched_symptoms.append(matches[0])
+                
+    if not matched_symptoms:
+        return {
+            "advice": "We could not match specific symptoms. Please consult a qualified clinician at your nearest district health center if symptoms persist.",
+            "severity": "low",
+            "matched": []
+        }
+        
+    severity_rank = {'low': 1, 'medium': 2, 'high': 3}
+    highest_severity = 'low'
+    combined_advice = []
+    
+    for symptom in matched_symptoms:
+        data = Symptoms[symptom]
+        combined_advice.append(f"• **{symptom.capitalize()}**: {data['advice']}")
+        if severity_rank.get(data['severity'], 1) > severity_rank.get(highest_severity, 1):
+            highest_severity = data['severity']
+            
+    return {
+        "advice": "<br>".join(combined_advice),
+        "severity": highest_severity,
+        "matched": matched_symptoms
+    }
+
 # PUBLIC CHAT ROUTE WITH FUZZY MATCHING & GPS SUPPORT
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.get_json()
-    user_message = data.get('message', '').strip().lower()
+    user_message = data.get('message', '').strip()
     district = data.get('district', 'chilenje').strip()
     nhima_only = data.get('nhima_only', False)
     hours_247_only = data.get('hours_247_only', False)
     user_lat = data.get('lat', None)
     user_lon = data.get('lon', None)
 
-    # 1. Check local language alias match first
-    translated_symptom = bemba_to_english.get(user_message, user_message)
+    # 1. Detect language using our ML model with confidence check
+    detected_lang, confidence = detect_user_language(user_message)
+    
+    # If confidence is below 60%, prompt user for preferred language
+    if confidence < 0.60:
+        return jsonify({
+            'reply': "We couldn't quite catch the language. Which language do you prefer? (English / Bemba / Nyanja)"
+        })
 
-    detected_conditions = []
-    highest_severity = 'low'
-    severity_rank = {'low': 1, 'medium': 2, 'high': 3}
+    # 2. Map local language phrase to English equivalent using dictionaries if needed
+    translated_symptom = bemba_to_english.get(user_message.lower(), user_message.lower())
 
-    # 2. Tokenize words to support fuzzy/typo matching
-    words = user_message.split()
+    # 3. Evaluate symptoms using multi-condition engine
+    evaluation = evaluate_symptoms(translated_symptom)
+    
+    advice_text = evaluation['advice']
+    if evaluation['severity'] == 'high':
+        advice_text = "⚠️ **URGENT MEDICAL ATTENTION RECOMMENDED**<br>" + advice_text
 
-    for symptom_key, info in Symptoms.items():
-        if symptom_key in translated_symptom or symptom_key in user_message:
-            if (symptom_key, info) not in detected_conditions:
-                detected_conditions.append((symptom_key, info))
-        else:
-            matches = difflib.get_close_matches(symptom_key, words, n=1, cutoff=0.6)
-            if matches:
-                if (symptom_key, info) not in detected_conditions:
-                    detected_conditions.append((symptom_key, info))
-
-        for _, inf in detected_conditions:
-            if severity_rank.get(inf['severity'], 1) > severity_rank.get(highest_severity, 1):
-                highest_severity = inf['severity']
-
-    # 3. Formulate response
-    if detected_conditions:
-        advice_parts = []
-        for symptom_key, info in detected_conditions:
-            advice_parts.append(f"• **{symptom_key.capitalize()}**: {info['advice']}")
-        
-        advice_text = "<br>".join(advice_parts)
-        if highest_severity == 'high':
-            advice_text = "⚠️ **URGENT MEDICAL ATTENTION RECOMMENDED**<br>" + advice_text
-
-        reply = f"Analysis for: '{user_message}'<br>{advice_text}"
+    if evaluation['matched']:
+        reply = f"[{detected_lang.upper()} Detected] Analysis for: '{user_message}'<br>{advice_text}"
     else:
-        reply = f"I didn't recognize specific symptoms in '{user_message}'. Try typing common symptoms like 'fever', 'headache', 'chest pain', or phrases like 'mutu ukupweteka'."
+        reply = f"[{detected_lang.upper()} Detected] {advice_text}"
 
     # 4. Append recommended clinic using GPS coordinates & filters
     clinic_info = get_nearest_clinic_by_gps(user_lat, user_lon, district, nhima_required=nhima_only, hours_247_required=hours_247_only)
     reply += f"<br><br>Recommended clinic: {clinic_info}"
 
     # 5. Log query into SQLite database
-    primary_symptom = detected_conditions[0][0] if detected_conditions else "unknown"
+    primary_symptom = evaluation['matched'][0] if evaluation['matched'] else "unknown"
     log_query_to_db(primary_symptom, district, reply)
 
     return jsonify({'reply': reply})
-
-# PROTECTED DASHBOARD (Requires Admin or Health Worker Login)
-@app.route('/dashboard')
-@auth.login_required
-def dashboard():
-    return render_template('stats.html')
 
 # PROTECTED STATS API ROUTE
 @app.route('/stats', methods=['GET'])
 @auth.login_required
 def stats():
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_db_connection()
     c = conn.cursor()
     
     c.execute('SELECT COUNT(*) FROM queries')
@@ -252,21 +346,29 @@ def stats():
 @app.route('/export', methods=['GET'])
 @auth.login_required
 def export_csv():
-    conn = sqlite3.connect(DB_NAME)
-    c = conn.cursor()
-    c.execute('SELECT id, timestamp, symptom, district, advice FROM queries ORDER BY id DESC')
-    rows = c.fetchall()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute('SELECT id, symptom, district, advice, timestamp FROM queries ORDER BY timestamp DESC')
+    rows = cursor.fetchall()
     conn.close()
 
-    csv_output = "id,timestamp,symptom,district,advice\n"
+    output = StringIO()
+    writer = csv.writer(output)
+    
+    writer.writerow(['ID', 'Symptom / Query', 'District', 'Generated Advice', 'Timestamp'])
+    
     for row in rows:
-        clean_advice = row[4].replace('<br>', ' ').replace('<strong>', '').replace('</strong>', '')
-        csv_output += f"{row[0]},{row[1]},{row[2]},{row[3]},\"{clean_advice}\"\n"
-
-    response = make_response(csv_output)
-    response.headers["Content-Disposition"] = "attachment; filename=bantu_health_queries.csv"
-    response.headers["Content-Type"] = "text/csv"
-    return response
+        clean_advice = row['advice'].replace('<br>', ' ').replace('<strong>', '').replace('</strong>', '')
+        writer.writerow([row['id'], row['symptom'], row['district'], clean_advice, row['timestamp']])
+    
+    output.seek(0)
+    
+    return Response(
+        output,
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment;filename=bantu_health_telemetry.csv"}
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
