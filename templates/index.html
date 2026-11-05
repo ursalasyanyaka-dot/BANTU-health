@@ -204,6 +204,32 @@
         if (event.key === "Enter") { sendMessage(); }
     });
 
+    let userLat = null;
+    let userLon = null;
+
+    // Load session history and request user GPS coordinates on page load
+    window.addEventListener("DOMContentLoaded", () => {
+        const savedMessages = sessionStorage.getItem("bantu_chat_history");
+        if (savedMessages) {
+            document.getElementById("chatMessages").innerHTML = savedMessages;
+            const chatMessages = document.getElementById("chatMessages");
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    userLat = position.coords.latitude;
+                    userLon = position.coords.longitude;
+                    console.log("GPS acquired:", userLat, userLon);
+                },
+                (error) => {
+                    console.log("Geolocation permission denied or not available. Falling back to district selector.");
+                }
+            );
+        }
+    });
+
     async function sendMessage() {
         const text = inputField.value.trim();
         const district = document.getElementById("districtInput").value;
@@ -218,7 +244,10 @@
         inputField.value = "";
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
-        // Send request to Flask backend including the new filter states
+        // Save session history state
+        sessionStorage.setItem("bantu_chat_history", chatMessages.innerHTML);
+
+        // Send request to Flask backend including GPS coordinates & filters
         try {
             const response = await fetch('/chat', {
                 method: 'POST',
@@ -227,7 +256,9 @@
                     message: text, 
                     district: district, 
                     nhima_only: nhimaOnly, 
-                    hours_247_only: hours247Only 
+                    hours_247_only: hours247Only,
+                    lat: userLat,
+                    lon: userLon
                 })
             });
             const data = await response.json();
@@ -243,8 +274,13 @@
 
             chatMessages.innerHTML += `<div class="message bot-message">${formattedReply}</div>`;
             chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Save session history state after bot reply
+            sessionStorage.setItem("bantu_chat_history", chatMessages.innerHTML);
+
         } catch (error) {
             chatMessages.innerHTML += `<div class="message bot-message">⚠️ Error connecting to server. Please try again.</div>`;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
     }
 

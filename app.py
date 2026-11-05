@@ -1,11 +1,32 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, make_response
+from flask_httpauth import HTTPBasicAuth
 import sqlite3
 import os
 import json
 import datetime
+import csv
+import difflib
+import math
+from dotenv import load_dotenv
 
 app = Flask(__name__)
+auth = HTTPBasicAuth()
 DB_NAME = 'queries.db'
+
+#load virtual credentials
+load_dotenv()
+
+# Define users and their roles
+USERS_ROLES = {
+    "admin": os.getenv("ADMIN_PASSWORD"),
+    "health_worker": os.getenv("HEALTH_WORKER_PASSWORD")
+}
+
+@auth.verify_password
+def verify_password(username, password):
+    if username in USERS_ROLES and USERS_ROLES[username] == password:
+        return username
+    return None
 
 # Initialize the database with all required columns
 def init_db():
@@ -60,30 +81,57 @@ bemba_to_english = {
     'muselo': 'fever'
 }
 
-# Helper to look up and filter Clinics by NHIMA and 24/7 Hours
-def get_filtered_clinic_by_district(district_name, nhima_required=False, hours_247_required=False):
+# Haversine formula to calculate distance in kilometers between two GPS coordinates
+def calculate_distance(lat1, lon1, lat2, lon2):
+    R = 6371  # Earth radius in kilometers
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat / 2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return R * c
+
+# GPS & Filter-aware Clinic Lookup Helper
+def get_nearest_clinic_by_gps(user_lat, user_lon, district_name, nhima_required=False, hours_247_required=False):
     try:
         base_dir = os.path.dirname(os.path.abspath(__file__))
         clinics_path = os.path.join(base_dir, 'clinics.json')
         if os.path.exists(clinics_path):
             with open(clinics_path, 'r', encoding='utf-8') as f:
                 clinics = json.load(f)
-                filtered = [c for c in clinics if c['district'].lower() == district_name.lower()]
                 
+                # Apply filters first
+                filtered = clinics
                 if nhima_required:
                     filtered = [c for c in filtered if str(c.get('nhima_accepted', '')).lower() in ['yes', 'true', 'accepted']]
-                
                 if hours_247_required:
                     filtered = [c for c in filtered if '24/7' in str(c.get('hours', ''))]
                 
-                if filtered:
-                    clinic = filtered[0]
+                # If GPS coordinates are provided, find the closest clinic among filtered options
+                if user_lat is not None and user_lon is not None and filtered:
+                    closest_clinic = min(
+                        filtered, 
+                        key=lambda c: calculate_distance(user_lat, user_lon, c.get('lat', -15.4), c.get('lon', 28.28))
+                    )
+                    distance_km = calculate_distance(user_lat, user_lon, closest_clinic['lat'], closest_clinic['lon'])
+                    
+                    nhima_status = "Accepted" if closest_clinic.get('nhima_accepted') else "Not Accepted"
+                    phone = closest_clinic.get('phone', 'N/A')
+                    phone_link = f'<a href="tel:{phone}" style="color: #0e6655; font-weight: bold; text-decoration: underline;">{phone}</a>' if phone != 'N/A' else 'N/A'
+                    return f"<strong>{closest_clinic['name']}</strong> (~{distance_km:.1f} km away)<br>Phone: {phone_link}<br>NHIMA: {nhima_status} | Hours: {closest_clinic.get('hours', '24/7')}"
+                
+                # Fallback to district dropdown selection if GPS is unavailable
+                district_filtered = [c for c in filtered if c['district'].lower() == district_name.lower()]
+                if district_filtered:
+                    clinic = district_filtered[0]
                     nhima_status = "Accepted" if clinic.get('nhima_accepted') else "Not Accepted"
-                    return f"{clinic['name']} | Phone: {clinic.get('phone', 'N/A')} | NHIMA: {nhima_status} | Hours: {clinic.get('hours', '24/7')}"
-    except Exception:
+                    phone = clinic.get('phone', 'N/A')
+                    phone_link = f'<a href="tel:{phone}" style="color: #0e6655; font-weight: bold; text-decoration: underline;">{phone}</a>' if phone != 'N/A' else 'N/A'
+                    return f"<strong>{clinic['name']}</strong> (District Default)<br>Phone: {phone_link}<br>NHIMA: {nhima_status} | Hours: {clinic.get('hours', '24/7')}"
+    except Exception as e:
         pass
-    return "Chilenje Level 1 Hospital | Phone: 0211-272123 | NHIMA: Accepted | Hours: 24/7 (Default)"
+    return "<strong>Chilenje Level 1 Hospital</strong><br>Phone: <a href='tel:0211272123' style='color: #0e6655; font-weight: bold;'>0211-272123</a><br>NHIMA: Accepted | Hours: 24/7 (Default)"
 
+# Public database logger
 def log_query_to_db(symptom, district, advice):
     conn = sqlite3.connect(DB_NAME)
     try:
@@ -99,6 +147,7 @@ def log_query_to_db(symptom, district, advice):
 def home():
     return render_template('index.html')
 
+# PUBLIC CHAT ROUTE WITH FUZZY MATCHING & GPS SUPPORT
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.get_json()
@@ -106,22 +155,34 @@ def chat():
     district = data.get('district', 'chilenje').strip()
     nhima_only = data.get('nhima_only', False)
     hours_247_only = data.get('hours_247_only', False)
-    
-    # 1. Check for local language alias match first
+    user_lat = data.get('lat', None)
+    user_lon = data.get('lon', None)
+
+    # 1. Check local language alias match first
     translated_symptom = bemba_to_english.get(user_message, user_message)
 
-    # 2. Support multi-condition matching
     detected_conditions = []
     highest_severity = 'low'
     severity_rank = {'low': 1, 'medium': 2, 'high': 3}
 
+    # 2. Tokenize words to support fuzzy/typo matching
+    words = user_message.split()
+
     for symptom_key, info in Symptoms.items():
         if symptom_key in translated_symptom or symptom_key in user_message:
-            detected_conditions.append((symptom_key, info))
-            if severity_rank.get(info['severity'], 1) > severity_rank.get(highest_severity, 1):
-                highest_severity = info['severity']
+            if (symptom_key, info) not in detected_conditions:
+                detected_conditions.append((symptom_key, info))
+        else:
+            matches = difflib.get_close_matches(symptom_key, words, n=1, cutoff=0.6)
+            if matches:
+                if (symptom_key, info) not in detected_conditions:
+                    detected_conditions.append((symptom_key, info))
 
-    # 3. Formulate the response
+        for _, inf in detected_conditions:
+            if severity_rank.get(inf['severity'], 1) > severity_rank.get(highest_severity, 1):
+                highest_severity = inf['severity']
+
+    # 3. Formulate response
     if detected_conditions:
         advice_parts = []
         for symptom_key, info in detected_conditions:
@@ -135,8 +196,8 @@ def chat():
     else:
         reply = f"I didn't recognize specific symptoms in '{user_message}'. Try typing common symptoms like 'fever', 'headache', 'chest pain', or phrases like 'mutu ukupweteka'."
 
-    # 4. Append recommended clinic with all filters applied
-    clinic_info = get_filtered_clinic_by_district(district, nhima_required=nhima_only, hours_247_required=hours_247_only)
+    # 4. Append recommended clinic using GPS coordinates & filters
+    clinic_info = get_nearest_clinic_by_gps(user_lat, user_lon, district, nhima_required=nhima_only, hours_247_required=hours_247_only)
     reply += f"<br><br>Recommended clinic: {clinic_info}"
 
     # 5. Log query into SQLite database
@@ -145,11 +206,15 @@ def chat():
 
     return jsonify({'reply': reply})
 
+# PROTECTED DASHBOARD (Requires Admin or Health Worker Login)
 @app.route('/dashboard')
+@auth.login_required
 def dashboard():
     return render_template('stats.html')
 
+# PROTECTED STATS API ROUTE
 @app.route('/stats', methods=['GET'])
+@auth.login_required
 def stats():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
@@ -182,6 +247,26 @@ def stats():
         'top_symptoms': top_symptoms,
         'busiest_district': busiest_district
     })
+
+# PROTECTED CSV EXPORT ROUTE
+@app.route('/export', methods=['GET'])
+@auth.login_required
+def export_csv():
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute('SELECT id, timestamp, symptom, district, advice FROM queries ORDER BY id DESC')
+    rows = c.fetchall()
+    conn.close()
+
+    csv_output = "id,timestamp,symptom,district,advice\n"
+    for row in rows:
+        clean_advice = row[4].replace('<br>', ' ').replace('<strong>', '').replace('</strong>', '')
+        csv_output += f"{row[0]},{row[1]},{row[2]},{row[3]},\"{clean_advice}\"\n"
+
+    response = make_response(csv_output)
+    response.headers["Content-Disposition"] = "attachment; filename=bantu_health_queries.csv"
+    response.headers["Content-Type"] = "text/csv"
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
