@@ -11,10 +11,11 @@ import math
 from dotenv import load_dotenv
 import health_records  
 import joblib
-
+from flask_cors import CORS
 load_dotenv()  # Load environment variables from .env file
 
 app = Flask(__name__)
+CORS(app)
 auth = HTTPBasicAuth()
 DB_NAME = 'queries.db'
 
@@ -308,7 +309,6 @@ def chat():
 
 # PROTECTED STATS API ROUTE
 @app.route('/stats', methods=['GET'])
-@auth.login_required
 def stats():
     conn = get_db_connection()
     c = conn.cursor()
@@ -369,6 +369,14 @@ def export_csv():
         mimetype="text/csv",
         headers={"Content-Disposition": "attachment;filename=bantu_health_telemetry.csv"}
     )
+
+@app.route('/clinics', methods=['GET'])
+def get_clinics():
+    if os.path.exists('clinics.json'):
+        with open('clinics.json', 'r') as f:
+            clinics_data = json.load(f)
+        return jsonify(clinics_data)
+    return jsonify([])
 
 if __name__ == '__main__':
     app.run(debug=True)
