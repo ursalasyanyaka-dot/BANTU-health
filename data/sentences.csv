@@ -1,103 +1,501 @@
-text,label
-"I have a bad cough that won't go away",english
-"My child has diarrhoea and is vomiting",english
-"I need to see a doctor today",english
-"Where can I get an HIV test?",english
-"I feel dizzy and weak",english
-"My stomach is paining me",english
-"I think I have malaria",english
-"Is the clinic open on Saturday?",english
-"I need medicine for high blood pressure",english
-"My baby has a high temperature",english
-"I have been vomiting since last night",english
-"How much does the consultation cost?",english
-"I am pregnant and need antenatal care",english
-"My back hurts when I walk",english
-"Where is the nearest pharmacy?",english
-"I have a rash on my skin",english
-"My eyes are red and itchy",english
-"I have a sore throat",english
-"I need to collect my ARV medication",english
-"My tooth is very painful",english
-"Please call an ambulance",english
-"I cannot breathe well",english
-"My child needs vaccination",english
-"I have diabetes and I need my insulin",english
-"My leg is swollen",english
-"I have been coughing blood",english
-"Where is the nearest hospital?",english
-"I have a runny nose and I keep sneezing",english
-"I need a medical certificate",english
-"I feel pain when I urinate",english
-"My ears are painful",english
-"I feel very tired all the time",english
-"Can I be tested for tuberculosis?",english
-"I have cut my hand badly",english
-"ndi no kukohola ukwakosa",bemba
-"umwana wandi alesanza kabili alecisha inda",bemba
-"ndefwaya ukumona dokota lelo",bemba
-"nga nasangila kwi ukupima HIV",bemba
-"ndeumfwa ukupona umutwe kabili ndi no kunaka",bemba
-"inda yandi ilalumina",bemba
-"ndecetekela ukuti ndi na malaria",bemba
-"icipatala cilepula pa Cibelushi",bemba
-"ndefwaya umuti wa mulopa uwa pamwamba",bemba
-"umubili wa mwana wandi ulakaba sana",bemba
-"nalesanza ukutula ubushiku bwa mailo",bemba
-"ukumona dokota kulefwaya ndalama shinga",bemba
-"ndi no lubo kabili ndefwaya ukulolwa",bemba
-"umukoshi wandi ulalumina nga ndeenda",bemba
-"icipatala ica pafupi cili kwi",bemba
-"ndi no kuchichila pa nkanda",bemba
-"amenso yandi yatukuka kabili yalenena",bemba
-"umukoshi wandi ulalumina",bemba
-"ndefwaya ukutola umuti wandi we ARV",bemba
-"ameno yandi yalelumina sana",bemba
-"mwebo mwiteni ambulansi",bemba
-"nshilefumya umutima bwino",bemba
-"umwana wandi alefwaya umuti wa kupela",bemba
-"ndi na matenda ya shuga kabili ndefwaya insulin",bemba
-"umulundu wandi walowa",bemba
-"ndi no kukohola umulopa",bemba
-"icipatala icikalamba ica pafupi cili kwi",bemba
-"ndi no kubomba umushishi kabili ndi no kuyetemuka",bemba
-"ndefwaya icalembwa ica dokota",bemba
-"ndeumfwa ububi nga ndelikoma",bemba
-"amatwi yandi yalelumina",bemba
-"ndi no kulemwa nshiku shonse",bemba
-"nga nshingapimwa TB",bemba
-"nalicetula ukuboko ukwabipisha",bemba
-"ndikutsokomola kwambiri",nyanja
-"mwana wanga akutsegula m'mimba ndi kusanza",nyanja
-"ndikufuna kuonana ndi dokotala lero",nyanja
-"kodi ndingapime kuti HIV?",nyanja
-"ndikumva chizungulire ndi kufooka",nyanja
-"m'mimba mwanga mukupweteka",nyanja
-"ndikuganiza kuti ndili ndi malungo",nyanja
-"kodi chipatala chimatsegula Loweruka?",nyanja
-"ndikufuna mankhwala a kuthamanga kwa magazi",nyanja
-"mwana wanga ali ndi malungo aakulu",nyanja
-"ndakhala ndikusanza kuyambira usiku",nyanja
-"kodi kuonana ndi dokotala ndi ndalama zingati?",nyanja
-"ndili ndi pakati ndipo ndikufuna chithandizo",nyanja
-"msana wanga ukupweteka ndikamayenda",nyanja
-"kodi pharmacy yapafupi ili kuti?",nyanja
-"ndili ndi zotupa pa khungu",nyanja
-"maso anga ndi ofiira ndipo akuyabwa",nyanja
-"kukhosi kukupweteka",nyanja
-"ndikufuna kutenga mankhwala anga a ARV",nyanja
-"dzino langa likupweteka kwambiri",nyanja
-"chonde itanani ambulansi",nyanja
-"sindikupuma bwino",nyanja
-"mwana wanga akufuna katemera",nyanja
-"ndili ndi matenda a shuga ndipo ndikufuna insulin",nyanja
-"mwendo wanga watupa",nyanja
-"ndikutsokomola magazi",nyanja
-"kodi chipatala chachikulu chapafupi chili kuti?",nyanja
-"ndikuthamanga mphuno ndipo ndikuyetsemula",nyanja
-"ndikufuna satifiketi ya chipatala",nyanja
-"ndimamva kuwawa ndikamakodza",nyanja
-"makutu anga akupweteka",nyanja
-"ndatopa nthawi zonse",nyanja
-"kodi ndingapimidwe TB?",nyanja
-"ndadzicheka kwambiri m'manja",nyanja
+text,language
+"I have been sick for three days",english
+"Do you have a female doctor?",english
+"I want to know my test results",english
+"My husband has been coughing for two weeks",english
+"I need an injection",english
+"The baby is not breastfeeding",english
+"I fell down and my arm is broken",english
+"I am bleeding a lot",english
+"Is the HIV test free?",english
+"My skin is itchy all over",english
+"My child's stomach is swollen",english
+"I have heartburn",english
+"I cannot sleep at night",english
+"I feel weak after giving birth",english
+"My grandmother cannot walk",english
+"What time does the clinic open?",english
+"I want to see a nurse",english
+"I need a mosquito net",english
+"I think my child has worms",english
+"My wound is not healing",english
+"I drank dirty water and now I have diarrhoea",english
+"My period pain is severe",english
+"I need ORS for my child",english
+"I have a lump on my neck",english
+"Someone has collapsed, please help",english
+"I was in an accident",english
+"My child has a fever and is shaking",english
+"Can I get a referral letter?",english
+"I take my tablets every day",english
+"I forgot to take my medicine yesterday",english
+"I cannot see clearly",english
+"I have a stiff neck and a headache",english
+"My feet are numb",english
+"I have been losing weight",english
+"Please speak slowly, I do not understand",english
+"Is there a long queue today?",english
+"I do not have money to pay",english
+"A dog has bitten my son",english
+"I have a boil",english
+"I feel nauseous after eating",english
+"Where is the laboratory?",english
+"I would like to be tested together with my partner",english
+"My child is coughing and breathing fast",english
+"I am breastfeeding and need advice",english
+"My face is swollen",english
+"I was told my blood pressure is high",english
+"My medicine has run out",english
+"I have pain in my lower belly",english
+"My eyes have turned yellow",english
+"Thank you doctor, I feel better",english
+"namona ubulwele inshiku shitatu",bemba
+"Kuli dokota umwanakashi?",bemba
+"Ndefwaya ukwishiba ifyo bapimine",bemba
+"Umwaume wandi alekohola amasabata yabili",bemba
+"Ndefwaya insindano",bemba
+"Akana tekonka ibele",bemba
+"Naponene kabili ukuboko kwandi kwatyoka",bemba
+"Ndi no kufuma umulopa sana",bemba
+"Ukupima HIV kulefwaya ndalama?",bemba
+"Umubili wonse ulenena",bemba
+"Inda ya mwana wandi yafula",bemba
+"Ndi no kupya mu cifuba",bemba
+"Nshingatona ubushiku",bemba
+"Ndi no kunaka panuma ya kubeleka",bemba
+"Bamayo bakalamba tabeenda",bemba
+"Icipatala cilepula pa nshita nshi?",bemba
+"Ndefwaya ukumona nesi",bemba
+"Ndefwaya neti ya malaria",bemba
+"Umwana wandi ali na ifipuku mu nda",bemba
+"Icilonda candi tacilepola",bemba
+"Naunwa amenshi yabipa kabili ndecisha inda",bemba
+"Amalumwa ya mu mweshi yalumina sana",bemba
+"Ndefwaya ORS ya mwana wandi",bemba
+"Ndi na icipumpu pa shingo",bemba
+"Umuntu waponena, mwafwe",bemba
+"Naba mu ngozi",bemba
+"Umwana wandi alekaba kabili alenyenyema",bemba
+"Nga nshingapewa icalembwa ica kuya ku cipatala cikalamba?",bemba
+"Ndelya imiti yandi cila bushiku",bemba
+"Naluba ukulya umuti wandi mailo",bemba
+"Nshilolesha bwino",bemba
+"Ishingo lyandi lyakosa kabili ndi no kulumwa umutwe",bemba
+"Amakasa yandi yafwa",bemba
+"Ndi no kuceefya umubili",bemba
+"Mwebo lungeni panono, nshumfwa",bemba
+"Kuli umulongo ukalamba lelo?",bemba
+"Nshaikwata ndalama sha kulipila",bemba
+"Imbwa yaluma umwana wandi",bemba
+"Ndi na icitupu pa mubili",bemba
+"Ndeumfwa ukusanza nga nacila ukulya",bemba
+"Ilaboratory ili kwi?",bemba
+"Ndefwaya ukupimwa pamo na umunandi",bemba
+"Umwana wandi alekohola kabili alefumya umutima bwangu",bemba
+"Ndeyamya kabili ndefwaya amano",bemba
+"Icinso candi cafula",bemba
+"Bambwile ukuti umulopa wandi uli pa pamwamba",bemba
+"Umuti wandi waishilila",bemba
+"Inda yandi ilalumina panshi",bemba
+"Amenso yandi yaba yellow",bemba
+"Natotela dokota, ndeumfwa bwino",bemba
+"ndakhala ndikudwala masiku atatu",nyanja
+"kodi muli ndi dokotala wamkazi?",nyanja
+"ndikufuna kudziwa zotsatira za kuyezetsa",nyanja
+"mwamuna wanga akutsokomola milungu iwiri",nyanja
+"ndikufuna jakisoni",nyanja
+"khanda silikuyamwa",nyanja
+"ndagwa ndipo dzanja langa lathyoka",nyanja
+"ndikutuluka magazi ambiri",nyanja
+"kodi kuyezetsa HIV ndi kwaulere?",nyanja
+"thupi langa lonse likuyabwa",nyanja
+"mimba ya mwana wanga yatupa",nyanja
+"ndikumva kutentha pachifuwa",nyanja
+"sindikugona usiku",nyanja
+"ndikumva kufooka nditabereka",nyanja
+"agogo anga sakuyenda",nyanja
+"kodi chipatala chimatsegula nthawi yanji?",nyanja
+"ndikufuna kuonana ndi namwino",nyanja
+"ndikufuna neti ya udzudzu",nyanja
+"mwana wanga ali ndi mphutsi",nyanja
+"bala langa silikupola",nyanja
+"ndamwa madzi akuda ndipo ndikutsegula m'mimba",nyanja
+"ndikumva kupweteka kwambiri nthawi ya msambo",nyanja
+"ndikufuna ORS ya mwana wanga",nyanja
+"ndili ndi chotupa pakhosi",nyanja
+"munthu wakomoka, chonde thandizeni",nyanja
+"ndachita ngozi",nyanja
+"mwana wanga ali ndi malungo ndipo akunjenjemera",nyanja
+"kodi ndingapeze kalata yondipititsa ku chipatala chachikulu?",nyanja
+"ndakhala ndikumwa mapiritsi anga tsiku lililonse",nyanja
+"ndayiwala kumwa mankhwala anga dzulo",nyanja
+"sindikuona bwino",nyanja
+"khosi langa lalimba ndipo mutu ukupweteka",nyanja
+"mapazi anga ali dzanzi",nyanja
+"ndikuonda",nyanja
+"chonde lankhulani pang'ono pang'ono, sindikumva",nyanja
+"kodi lero pali mzere wautali?",nyanja
+"ndilibe ndalama zolipira",nyanja
+"galu waluma mwana wanga wamwamuna",nyanja
+"ndili ndi chithupsa",nyanja
+"ndimamva kusanza ndikamaliza kudya",nyanja
+"kodi laboratory ili kuti?",nyanja
+"ndikufuna kuyezedwa limodzi ndi mnzanga",nyanja
+"mwana wanga akutsokomola ndipo akupuma mofulumira",nyanja
+"ndikuyamwitsa ndipo ndikufuna uphungu",nyanja
+"nkhope yanga yatupa",nyanja
+"andiuza kuti magazi anga akuthamanga kwambiri",nyanja
+"mankhwala anga atha",nyanja
+"ndikumva kupweteka pansi pa mimba",nyanja
+"maso anga asanduka achikasu",nyanja
+"zikomo dokotala, ndikumva bwino",nyanja
+"Ndilakala ndilwala mazuba otatwe",tonga
+"Mujisi dokota mukaintu naa?",tonga
+"Ndiyanda kuziba mpindu zyakupimwa",tonga
+"Mulumi wangu ulakoola masondo obilo",tonga
+"Ndiyanda jekiseni",tonga
+"Mwana tanyonki",tonga
+"Ndawa alimwi mukono wangu wavunika",tonga
+"Ndilafwa mulopa kapati",tonga
+"Kupimwa HIV kwa mahala naa?",tonga
+"Mubili wangu wonse ulazyuma",tonga
+"Mwida wa mwana wangu wazimba",tonga
+"Ndilapya mucifuba",tonga
+"Tandigoni busiku",tonga
+"Ndiluleme kuzwa kuzyala",tonga
+"Bamama bakulu tabakonzyi kweenda",tonga
+"Cibbadela cilajulwa ciindi nzi?",tonga
+"Ndiyanda kubona nesi",tonga
+"Ndiyanda neti ya malaria",tonga
+"Mwana wangu ulijisi inzoka mumwida",tonga
+"Cilonda cangu tacilapozya",tonga
+"Ndanywa mezi mabi alimwi ndilaisya",tonga
+"Ndilalumwa kapati ciindi cakuya mumwezi",tonga
+"Ndiyanda ORS ya mwana wangu",tonga
+"Ndijisi cizimba mukoosi",tonga
+"Muntu wawa, amutugwasye",tonga
+"Ndajanwa mungozi",tonga
+"Mwana wangu ulijisi kutentema alimwi ulakankama",tonga
+"Ndikonzya kutambula kkaalata yakundituma kucibbadela cipati naa?",tonga
+"Ndilanywa mapilisi aangu buzuba abuzuba",tonga
+"Ndazimiya kunywa mulimo wangu kunoli",tonga
+"Tandikonzyi kubona kabotu",tonga
+"Mukoosi wangu wakosa alimwi mutwe ulalumwa",tonga
+"Malokwe aangu afwa",tonga
+"Mubili wangu ulacepa",tonga
+"Amwaambe kabotu, tandimvwi",tonga
+"Kuli mulongo mupati sunu naa?",tonga
+"Tandijisi mali aakulipa",tonga
+"Imbwa yaluma mwana wangu mulombe",tonga
+"Ndijisi cibulu",tonga
+"Ndiyumva kusanza ndamana kulya",tonga
+"Laboratory iili kuli?",tonga
+"Ndiyanda kupimwa antoomwe amweenzuma",tonga
+"Mwana wangu ulakoola alimwi ulafwuwa cakufwambaana",tonga
+"Ndilanyonsya alimwi ndiyanda lulayo",tonga
+"Busyu bwangu bwazimba",tonga
+"Bandaambila kuti mulopa wangu uli atala",tonga
+"Mulimo wangu wapera",tonga
+"Ndilalumwa kunsi amwida",tonga
+"Meso aangu abaama yellow",tonga
+"Ndalumba dokota, ndiyumva kabotu",tonga
+"Ni kolobezi mazazi a mararu",lozi
+"Mu na ni ndoctala musali?",lozi
+"Ni batile ku ziba liphetho za ku tolwa",lozi
+"Munna wa ka u kuhola lisunda zepeli",lozi
+"Ni batile jekiseni",lozi
+"Mwana ha nyoha",lozi
+"Ni wile mi lizoho la ka li tokile",lozi
+"Ni tuha mali a mañata",lozi
+"Ku tolwa HIV ku sa lifiwa kana?",lozi
+"Mubili wa ka kaufela u kokota",lozi
+"Mpa ya mwana wa ka i fufumezi",lozi
+"Ni utwa ku cisa mwa sifuba",lozi
+"Ha ni kone ku lala busihu",lozi
+"Ni utwa ku fokola kamba ya ku pepa",lozi
+"Nkuku wa ka ha kone ku tamba",lozi
+"Sipatela si buleha ka nako mañi?",lozi
+"Ni batile ku bona nesi",lozi
+"Ni batile neti ya ku lwanisa malaria",lozi
+"Mwana wa ka u na ni linoha mwa mpa",lozi
+"Lilonda la ka ha li folisehi",lozi
+"Ni nwezi mezi a litila mi ni tuhela mwa mpa",lozi
+"Ni utwa butuku bo butuna ha ni na ni mwezi",lozi
+"Ni batile ORS ya mwana wa ka",lozi
+"Ni na ni situpu mwa mukoko",lozi
+"Mutu u wile, mu lu tuse",lozi
+"Ni bile mwa ngozi",lozi
+"Mwana wa ka u na ni mubili o tuna mi u a tutuma",lozi
+"Ni kona ku fiwa mukanda wa ku ni tumela sipatela se situna?",lozi
+"Ni nwa lipilisi za ka zazi ni zazi",lozi
+"Ni lebala ku nwa molemo wa ka maobane",lozi
+"Ha ni boni hande",lozi
+"Mukoko wa ka u omile mi mutwi u utwisa butuku",lozi
+"Lieta za ka li shwile",lozi
+"Mubili wa ka u a ceha",lozi
+"Mu bulele hanyinyani, ha ni utwisisi",lozi
+"Ku na ni mulongo o mutelele kacenu?",lozi
+"Ha ni na mali a ku lifa",lozi
+"Pitsi i lumile mwana wa ka",lozi
+"Ni na ni situpu",lozi
+"Ni utwa ku hoka ha ni felize ku eza",lozi
+"Laboratory i kai?",lozi
+"Ni batile ku tolwa hamoho ni mulikani wa ka",lozi
+"Mwana wa ka u a kuhola mi u hema ka potlako",lozi
+"Ni anyisa mi ni batile keleko",lozi
+"Lihata la ka li fufumezi",lozi
+"Ba ni bulelezi kuli mali a ka a mañata",lozi
+"Molemo wa ka u felile",lozi
+"Ni utwa butuku kwa tlase ya mpa",lozi
+"Mahalu a ka a fetohile yellow",lozi
+"Ni itumezi ndoctala, ni utwa hande",lozi
+"Nkuvwala bilumbi bitatu",kaonde
+"Mwakwete dokota mukazhi?",kaonde
+"Nkana kuyuka bipimo byami",kaonde
+"Mulume wami uteta mingonge ibiji",kaonde
+"Nkana jekisheni",kaonde
+"Mwana tanyonka",kaonde
+"Ngwa kabiji kuboko kwami kwatoka",kaonde
+"Nkuseka bulopa bwingi",kaonde
+"Kupimwa HIV kwa mahala nyi?",kaonde
+"Mubidi wami onse uzyuma",kaonde
+"Munda wa mwana wami wafula",kaonde
+"Nkupya mu kifuba",kaonde
+"Nshikonsha kulala bufuku",kaonde
+"Nkumvwa kukosa kuma kuzhala",kaonde
+"Nkaka wami tonsha kwenda",kaonde
+"Kipatala kyabula nshita nyi?",kaonde
+"Nkana kumona nesi",kaonde
+"Nkana neti ya malaria",kaonde
+"Mwana wami ukwete minoka mu munda",kaonde
+"Kilonda kyami tekyupola",kaonde
+"Nanwa mema abubi ne nkuseka mu munda",kaonde
+"Nkumvwa bulumi bwingi pa kuya mu mwezi",kaonde
+"Nkana ORS ya mwana wami",kaonde
+"Nkwete kipumpu pa mukoshi",kaonde
+"Muntu wawa, mutukwashe",kaonde
+"Nali mu ngozi",kaonde
+"Mwana wami ukwete mujilo ne kutenga",kaonde
+"Nakonsha kutambula kalata ya kunditumina ku kipatala kikata nyi?",kaonde
+"Nkunwa mapilisi ami buzuba ne buzuba",kaonde
+"Nalubula kunwa mushi wami lyamayuba",kaonde
+"Nshimoni bulongo",kaonde
+"Mukoshi wami wakosa ne mutwe ulumwa",kaonde
+"Magulu ami afwa",kaonde
+"Mubidi wami ulacepa",kaonde
+"Mwambe bulongo, nshimvwa",kaonde
+"Kuli mulongo mukata lelo?",kaonde
+"Nshikwete mali a kulipila",kaonde
+"Mbwa yaluma mwana wami",kaonde
+"Nkwete kibulu",kaonde
+"Nkumvwa kusoka nanwa kudya",kaonde
+"Laboratory ili kwepi?",kaonde
+"Nkana kupimwa pamo ne mwenzhi wami",kaonde
+"Mwana wami uteta ne kufwa mutima bwangu",kaonde
+"Nkwete mwana wa kunyonka ne nkana lufunjisho",kaonde
+"Busu bwami bwafula",kaonde
+"Banjile kuti bulopa bwami buli pa kyulu",kaonde
+"Mushi wami wapwa",kaonde
+"Nkumvwa bulumi panshi pa munda",kaonde
+"Meso ami aaba yellow",kaonde
+"Natotela dokota, nkumvwa bulongo",kaonde
+"Ndi nakuzata mazuba atatu",lunda
+"Mwukweti dokota mukaji?",lunda
+"Nakeñaña kwiluka yakupima",lunda
+"Mulumi jami wukukoola mawiki hayedi",lunda
+"Nakeñaña jekisheni",lunda
+"Mwana nshanyonka",lunda
+"Ndakuha kuboko jami jatoka",lunda
+"Ndi nakufuma mashi amavulu",lunda
+"Kupimwa HIV kwa mahala?",lunda
+"Mujimba jami jejima jikuzyuma",lunda
+"Munda wa mwana jami wafula",lunda
+"Nakutiya kupya muchifuva",lunda
+"Nshikañanya kulala kumpinji",lunda
+"Nakutiya kukosa kufuma kuzhala",lunda
+"Nkaka jami nshikañanya kwenda",lunda
+"Chipatala chakujula ndawu muyi?",lunda
+"Nakeñaña kumona nesi",lunda
+"Nakeñaña neti ya malaria",lunda
+"Mwana jami wukweti minoka mumunda",lunda
+"Chilonda chami nshichipoli",lunda
+"Ndanwa menji amabi ndi nakuseka",lunda
+"Nakutiya kuluma chikupu hakuya mumwedi",lunda
+"Nakeñaña ORS ya mwana jami",lunda
+"Ndi nakweti chipumpu hashingo",lunda
+"Muntu wahwa, tukwashenu",lunda
+"Ndabula mungozi",lunda
+"Mwana jami wukweti kutentema nakunyenyema",lunda
+"Ndi nakukañanya kutambula karata yakunyituma kuchipatala chachinene?",lunda
+"Ndi nakunwa mapilisi ami mazuba ejima",lunda
+"Ndalubula kunwa mukunku jami dayena",lunda
+"Nshimwena chiwahi",lunda
+"Shingo jami jakosa nawa mutu wukuluma",lunda
+"Malu ami afwa",lunda
+"Mujimba jami jikuchepa",lunda
+"Yilenu chiwahi, nshitiya",lunda
+"Kudi mulongo wachinene lelu?",lunda
+"Nshikweti mali akulipa",lunda
+"Kabwa kamulumina mwana jami",lunda
+"Ndi nakweti chibulu",lunda
+"Nakutiya kusanza nakwila kudya",lunda
+"Laboratory yidi kudi?",lunda
+"Nakeñaña kupimwa hamu ni mukwami",lunda
+"Mwana jami wukukoola nakufwa mutima nakukasuka",lunda
+"Nakeñaña kuvundamena nakunyonkesha",lunda
+"Chiso chami chafula",lunda
+"Anyilwiti nawu mashi ami adi hakulu",lunda
+"Mukunku jami japwa",lunda
+"Nakutiya kuluma hasi hamunda",lunda
+"Mesu ami aba yellow",lunda
+"Natotela dokota, nakutiya chiwahi",lunda
+"Ngwakulwala mazuvo atatu",luvale
+"Mwakwete dokota mukaji?",luvale
+"Ngwazanga kwiluka vyakupima",luvale
+"Mulume jami akukoola mawiki vavali",luvale
+"Ngwazanga jekisheni",luvale
+"Mwana kanyonka",luvale
+"Ngwakuhwa kuboko jami kwatoka",luvale
+"Ngwakufuma mashi amavulu",luvale
+"Kupimwa HIV kwa mahala?",luvale
+"Mujimba jami wosena ukuzyuma",luvale
+"Munda wa mwana jami wafula",luvale
+"Ngwakupya muchifuva",luvale
+"Ngwatondwa kulala kumpinji",luvale
+"Ngwakutiya kukosa kufuma kuzhala",luvale
+"Nkaka jami kakonsa kwenda",luvale
+"Chipatala chakujula ngachi?",luvale
+"Ngwazanga kumona nesi",luvale
+"Ngwazanga neti ya malaria",luvale
+"Mwana jami kwete minoka mumunda",luvale
+"Chilonda chami kachipoli",luvale
+"Ngwanwa menji amabi ngwakuseka",luvale
+"Ngwakutiya kuluma chikuma kuya mumwedi",luvale
+"Ngwazanga ORS ya mwana jami",luvale
+"Ngwakwete chipumpu kushingo",luvale
+"Muntu wahwa, tukwashenu",luvale
+"Ngwali mungozi",luvale
+"Mwana jami kwete kutentema ngakunyenyema",luvale
+"Ngwatela kutambula karata yakungituma kuchipatala chachinene?",luvale
+"Ngwakunwa mapilisi ami mazuvo osena",luvale
+"Ngwalubula kunwa mukunku jami ulyoli",luvale
+"Kangumona chiwahi",luvale
+"Shingo jami jakosa nawa mutu ukuluma",luvale
+"Malu ami afwa",luvale
+"Mujimba jami ukuchepa",luvale
+"Hosenu chiwahi, kangutiya",luvale
+"Kuli mulongo wachinene lelu?",luvale
+"Kangwakwete mali akulipa",luvale
+"Mbwa yamulumina mwana jami",luvale
+"Ngwakwete chibulu",luvale
+"Ngwakutiya kusanza ngwapwa kudya",luvale
+"Laboratory yili kuli?",luvale
+"Ngwazanga kupimwa hamwe ni mukwetu",luvale
+"Mwana jami akukoola nakufwa mutima kasuku",luvale
+"Ngwakunyonkesha ngwazanga kuhana mazu",luvale
+"Chiso chami chafula",luvale
+"Anguhimbila ngwenyi mashi ami ali kulutwe",luvale
+"Mukunku jami wapwa",luvale
+"Ngwakutiya kuluma hasi hamunda",luvale
+"Meso ami aba yellow",luvale
+"Natotela dokota, ngwakutiya chiwahi",luvale
+"Ndalwara mazuŵa ghatatu",tumbuka
+"Muli na dokotala mwanakazi?",tumbuka
+"Nkhukhumba kumanya mazgu gha kupimiska",tumbuka
+"Mwamuna wane wakukhoya masabata ghaŵili",tumbuka
+"Nkhukhumba jakisoni",tumbuka
+"Mwana wakuyamwa cara",tumbuka
+"Nadagha ndipo woko lane laphwanyika",tumbuka
+"Nkhuruka ndopa zinandi",tumbuka
+"Kupimiska HIV nkhwaulere?",tumbuka
+"Thupi lane lose likuyabwa",tumbuka
+"Cifu ca mwana wane cawupa",tumbuka
+"Nkhuvwa kuŵaŵa pa chifuwa",tumbuka
+"Nkhugona cara usiku",tumbuka
+"Nkhuvwa kulopoka pamanyuma pa kubala",tumbuka
+"Gogo wane waenda cara",tumbuka
+"Cipatala cikaphulika nyengo yiwanyi?",tumbuka
+"Nkhukhumba kuwona nesi",tumbuka
+"Nkhukhumba neti ya malungo",tumbuka
+"Mwana wane wali na mphutsi",tumbuka
+"Cilonda cane cikupona cara",tumbuka
+"Namwa maji ghakuipa ndipo nkhusisa",tumbuka
+"Nkhuvwa kuŵaŵa comu pa nyengo ya mwezi",tumbuka
+"Nkhukhumba ORS ya mwana wane",tumbuka
+"Ndili na cizimba pa singo",tumbuka
+"Munthu wagwa, tovwirani",tumbuka
+"Nakumana na ngozi",tumbuka
+"Mwana wane wali na malungo ndipo wakukhukhuma",tumbuka
+"Ningaphata kalata yakunditumizgira ku cipatala cikuru?",tumbuka
+"Nkhumwa mapilisi gha ne zuŵa lililose",tumbuka
+"Nayiwala kumwa marwani gha ne dazi",tumbuka
+"Nkhuwona cara makora",tumbuka
+"Singo lane lawumirira ndipo mutu ukupweteka",tumbuka
+"Magulu gha ne ghali dzanzi",tumbuka
+"Nkhuŵa wakuondeka",tumbuka
+"Lekani mukamba pang'ono pang'ono, nkhupulika cara",tumbuka
+"Pali mzere wautali lero?",tumbuka
+"Ndilije ndalama zakulipira",tumbuka
+"Galu waluma mwana wane",tumbuka
+"Ndili na cithupsa",tumbuka
+"Nkhuvwa kusanza pamanyuma pa kulya",tumbuka
+"Laboratory yili nkhu?",tumbuka
+"Nkhukhumba kupimiskika pamoza na mwenzi wane",tumbuka
+"Mwana wane wakukhoya ndipo wakuhema mwaluŵiro",tumbuka
+"Nkhuyamwisa ndipo nkhukhumba uphungu",tumbuka
+"Chiso chane cawupa",tumbuka
+"Andiphalira kuti ndopa zane zili pa nthazi",tumbuka
+"Marwani gha ne ghamara",tumbuka
+"Nkhuvwa kuŵaŵa pasi pa cifu",tumbuka
+"Maso gha ne ghasintha kuŵa ghakuchikasu",tumbuka
+"Zikomo dokotala, nkhuvwa makora",tumbuka
+"Nalwala inshiku shitatu",lamba
+"Kuli dokota umwanakashi?",lamba
+"Ndefwaya ukwishiba ifyo bapimine",lamba
+"Umwaume wandi alekohola amasabata yabili",lamba
+"Ndefwaya insindano",lamba
+"Akana tekonka ibele",lamba
+"Naponene kabili ukuboko kwandi kwatyoka",lamba
+"Ndi no kufuma umulopa sana",lamba
+"Ukupima HIV kulefwaya ndalama?",lamba
+"Umubili wandi onse ulenena",lamba
+"Inda ya mwana wandi yafula",lamba
+"Ndi no kupya mu cifuba",lamba
+"Nshingatona ubushiku",lamba
+"Ndeumfwa ukunaka panuma ya kubeleka",lamba
+"Bamayo bakalamba tabeenda",lamba
+"Icipatala cilepula pa nshita nshi?",lamba
+"Ndefwaya ukumona nesi",lamba
+"Ndefwaya neti ya malaria",lamba
+"Umwana wandi ali na ifipuku mu nda",lamba
+"Icilonda candi tacilepola",lamba
+"Naunwa amenshi yabipa kabili ndesanza",lamba
+"Ndeumfwa ukulumwa sana mu mweshi",lamba
+"Ndefwaya ORS ya mwana wandi",lamba
+"Ndi na icipumpu pa shingo",lamba
+"Umuntu waponena, mwafwe",lamba
+"Naba mu ngozi",lamba
+"Umwana wandi alekaba kabili alenyenyema",lamba
+"Ndingapewa icalembwa ica kuya ku cipatala icikalamba?",lamba
+"Ndelya imiti yandi cila bushiku",lamba
+"Naluba ukulya umuti wandi mailo",lamba
+"Nshilolesha bwino",lamba
+"Ishingo lyandi lyakosa kabili umutwe ulalumina",lamba
+"Amakasa yandi yafwa",lamba
+"Umubili wandi ulaceefya",lamba
+"Mwebo lungeni panono, nshumfwa",lamba
+"Kuli umulongo ukalamba lelo?",lamba
+"Nshaikwata ndalama sha kulipila",lamba
+"Imbwa yaluma umwana wandi",lamba
+"Ndi na icitupu pa mubili",lamba
+"Ndeumfwa ukusanza nga nacila ukulya",lamba
+"Ilaboratory ili kwi?",lamba
+"Ndefwaya ukupimwa pamo ne munandi",lamba
+"Umwana wandi alekohola kabili alefumya umutima bwangu",lamba
+"Ndeyamya kabili ndefwaya amano",lamba
+"Icinso candi cafula",lamba
+"Bambwile ukuti umulopa wandi uli pa pamwamba",lamba
+"Umuti wandi waishilila",lamba
+"Inda yandi ilalumina panshi",lamba
+"Amesho yandi yaba yellow",lamba
+"Natotela dokota, ndeumfwa bwino",lamba

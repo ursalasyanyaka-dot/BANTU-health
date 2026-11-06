@@ -5,6 +5,7 @@ import os
 import json
 import datetime
 import csv
+import io
 from io import StringIO
 import difflib
 import math
@@ -12,6 +13,8 @@ from dotenv import load_dotenv
 import health_records  
 import joblib
 from flask_cors import CORS
+
+
 load_dotenv()  # Load environment variables from .env file
 
 app = Flask(__name__)
@@ -51,6 +54,31 @@ if os.path.exists(model_path) and os.path.exists(vectorizer_path):
     lang_model = joblib.load(model_path)
     lang_vectorizer = joblib.load(vectorizer_path)
     print("Language detection model loaded successfully into backend!")
+
+SESSION_HISTORY = {}
+
+@app.route('/session/history', methods=['POST'])
+def add_session_history():
+    data = request.get_json() or {}
+    session_id = data.get('session_id', 'default_user')
+    query_data = {
+        "symptom": data.get('symptom'),
+        "district": data.get('district'),
+        "advice": data.get('advice'),
+        "timestamp": data.get('timestamp')
+    }
+    
+    if session_id not in SESSION_HISTORY:
+        SESSION_HISTORY[session_id] = []
+        
+    SESSION_HISTORY[session_id].append(query_data)
+    return jsonify({"status": "success", "history_count": len(SESSION_HISTORY[session_id])}), 200
+
+@app.route('/session/history/<session_id>', methods=['GET'])
+def get_session_history(session_id):
+    history = SESSION_HISTORY.get(session_id, [])
+    return jsonify({"session_id": session_id, "history": history}), 200
+
 
 def detect_user_language(text):
     """
@@ -148,6 +176,28 @@ bemba_to_english = {
     # Tonga additions
     'ndila vuna mutwe': 'headache',
     'muselo': 'fever'
+}
+
+# Multi-language response templates
+response_templates = {
+    'english': {
+        'urgent': "⚠️ **URGENT MEDICAL ATTENTION RECOMMENDED**<br>",
+        'analysis': "Analysis for: '{user_message}'<br>{advice}",
+        'default': "{advice}",
+        'clinic': "<br><br>Recommended clinic: {clinic_info}"
+    },
+    'bemba': {
+        'urgent': "⚠️ **UMUTIMA WA NSHITA: CILONGO CA KULONGALONGA KU CIPATALA CILEKWETWA**<br>",
+        'analysis': "Ifyebo fya: '{user_message}'<br>{advice}",
+        'default': "{advice}",
+        'clinic': "<br><br>Icipatala icisuma: {clinic_info}"
+    },
+    'nyanja': {
+        'urgent': "⚠️ **CHOFUNIKA KWAMBIRI: PITANI KU CHIPATALA MWAMSANGA**<br>",
+        'analysis': "Kufufuza kwa: '{user_message}'<br>{advice}",
+        'default': "{advice}",
+        'clinic': "<br><br>Chipatala choyenera: {clinic_info}"
+    }
 }
 
 # Haversine formula to calculate distance in kilometers between two GPS coordinates
@@ -265,7 +315,7 @@ def evaluate_symptoms(user_input):
 # PUBLIC CHAT ROUTE WITH FUZZY MATCHING & GPS SUPPORT
 @app.route('/chat', methods=['POST'])
 def chat():
-    data = request.get_json()
+    data = request.get_json() or {}
     user_message = data.get('message', '').strip()
     district = data.get('district', 'chilenje').strip()
     nhima_only = data.get('nhima_only', False)
@@ -273,39 +323,51 @@ def chat():
     user_lat = data.get('lat', None)
     user_lon = data.get('lon', None)
 
-    # 1. Detect language using our ML model with confidence check
-    detected_lang, confidence = detect_user_language(user_message)
-    
-    # If confidence is below 60%, prompt user for preferred language
-    if confidence < 0.60:
-        return jsonify({
-            'reply': "We couldn't quite catch the language. Which language do you prefer? (English / Bemba / Nyanja)"
-        })
+    # 1. Detect language
+    lower_msg = user_message.lower()
+    if lower_msg in ['english', 'bemba', 'nyanja', 'tonga', 'lozi', 'kaonde', 'lunda', 'luvale', 'tumbuka', 'lamba']:
+        detected_lang = lower_msg
+        confidence = 1.0
+    else:
+        detected_lang, confidence = detect_user_language(user_message)
+        common_terms = ['fever', 'headache', 'cough', 'pain', 'malaria', 'flu']
+        if confidence < 0.60 and lower_msg not in common_terms:
+            return jsonify({
+                'reply': "We couldn't quite catch the language. Which language do you prefer? (English / Bemba / Nyanja)"
+            })
+        elif confidence < 0.60:
+            detected_lang = 'english'
 
-    # 2. Map local language phrase to English equivalent using dictionaries if needed
-    translated_symptom = bemba_to_english.get(user_message.lower(), user_message.lower())
+    # Normalize detected language key for template lookup (default to english if unknown)
+    lang_key = detected_lang if detected_lang in response_templates else 'english'
+    templates = response_templates[lang_key]
 
-    # 3. Evaluate symptoms using multi-condition engine
+    # 2. Map local phrase to English equivalent for symptom evaluation
+    translated_symptom = bemba_to_english.get(lower_msg, lower_msg)
+
+    # 3. Evaluate symptoms
     evaluation = evaluate_symptoms(translated_symptom)
-    
     advice_text = evaluation['advice']
+
+    # Apply urgent formatting if high severity
     if evaluation['severity'] == 'high':
-        advice_text = "⚠️ **URGENT MEDICAL ATTENTION RECOMMENDED**<br>" + advice_text
+        advice_text = templates['urgent'] + advice_text
 
     if evaluation['matched']:
-        reply = f"[{detected_lang.upper()} Detected] Analysis for: '{user_message}'<br>{advice_text}"
+        body = templates['analysis'].format(user_message=user_message, advice=advice_text)
     else:
-        reply = f"[{detected_lang.upper()} Detected] {advice_text}"
+        body = templates['default'].format(advice=advice_text)
 
-    # 4. Append recommended clinic using GPS coordinates & filters
+    # 4. Get clinic recommendation and append using template
     clinic_info = get_nearest_clinic_by_gps(user_lat, user_lon, district, nhima_required=nhima_only, hours_247_required=hours_247_only)
-    reply += f"<br><br>Recommended clinic: {clinic_info}"
+    reply = f"[{detected_lang.upper()} Detected] {body}" + templates['clinic'].format(clinic_info=clinic_info)
 
     # 5. Log query into SQLite database
-    primary_symptom = evaluation['matched'][0] if evaluation['matched'] else "unknown"
+    primary_symptom = evaluation['matched'][0] if evaluation['matched'] else user_message
     log_query_to_db(primary_symptom, district, reply)
 
     return jsonify({'reply': reply})
+
 
 # PROTECTED STATS API ROUTE
 @app.route('/stats', methods=['GET'])
@@ -343,32 +405,37 @@ def stats():
     })
 
 # PROTECTED CSV EXPORT ROUTE
-@app.route('/export', methods=['GET'])
+@app.route('/export/csv', methods=['GET'])
 @auth.login_required
 def export_csv():
-    conn = get_db_connection()
-    cursor = conn.cursor()
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
     
-    cursor.execute('SELECT id, symptom, district, advice, timestamp FROM queries ORDER BY timestamp DESC')
-    rows = cursor.fetchall()
+    # Fetch all query telemetry records
+    c.execute("SELECT id, symptom, district, language, timestamp FROM queries")
+    rows = c.fetchall()
     conn.close()
 
-    output = StringIO()
+    # Create an in-memory string buffer for CSV data
+    output = io.StringIO()
     writer = csv.writer(output)
     
-    writer.writerow(['ID', 'Symptom / Query', 'District', 'Generated Advice', 'Timestamp'])
+    # Write CSV Header
+    writer.writerow(['ID', 'Symptom', 'District', 'Language', 'Timestamp'])
     
+    # Write data rows
     for row in rows:
-        clean_advice = row['advice'].replace('<br>', ' ').replace('<strong>', '').replace('</strong>', '')
-        writer.writerow([row['id'], row['symptom'], row['district'], clean_advice, row['timestamp']])
-    
+        writer.writerow(row)
+        
     output.seek(0)
     
+    # Return file response as a downloadable CSV attachment
     return Response(
-        output,
+        output.getvalue(),
         mimetype="text/csv",
         headers={"Content-Disposition": "attachment;filename=bantu_health_telemetry.csv"}
     )
+
 
 @app.route('/clinics', methods=['GET'])
 def get_clinics():
