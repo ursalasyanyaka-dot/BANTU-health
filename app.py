@@ -22,6 +22,13 @@ CORS(app)
 auth = HTTPBasicAuth()
 DB_NAME = 'queries.db'
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(BASE_DIR, 'models', 'language_detector.pkl')
+vectorizer_path = os.path.join(BASE_DIR, 'models', 'vectorizer.pkl')
+
+model = joblib.load(model_path)
+vectorizer = joblib.load(vectorizer_path)
+
 # Define users and their roles
 USERS_ROLES = {
     "admin": os.getenv("ADMIN_PASSWORD", "adminpass2026"),
